@@ -4,12 +4,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.CacheManager;
-import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -17,8 +13,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import redis.clients.jedis.Protocol;
 
 @Configuration
-@EnableCaching
-@ComponentScan("tr.com.nadir.redis")
 public class RedisConfig {
 	@Value("${spring.redis.url}")
 	private String redisUrl;
@@ -36,11 +30,7 @@ public class RedisConfig {
 	@Bean
 	public JedisConnectionFactory redisConnectionFactory() {
 		try {
-			String redistogoUrl = System.getenv("REDISTOGO_URL");
-			if( redistogoUrl == null ){
-				redistogoUrl = redisUrl;
-			}
-			URI redistogoUri = new URI(redistogoUrl);
+			URI redistogoUri = new URI(redisUrl);
 			JedisConnectionFactory jedisConnFactory = new JedisConnectionFactory();
 			jedisConnFactory.setUsePool(true);
 			jedisConnFactory.setHostName(redistogoUri.getHost());
@@ -79,9 +69,9 @@ public class RedisConfig {
 		return redisTemplate;
 	}
 
-	@Bean
-	public CacheManager cacheManager() {
-		return new RedisCacheManager(redisTemplate(redisConnectionFactory()));
-	}
+//	@Bean
+//	public CacheManager cacheManager() {
+//		return new RedisCacheManager(redisTemplate(redisConnectionFactory()));
+//	}
 
 }
